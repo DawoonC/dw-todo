@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Antd from 'ant-design-vue';
+import HeyUI from 'heyui';
 
 import utils from './plugins/utils';
 import DB from './plugins/db';
@@ -7,13 +7,13 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 
-import 'ant-design-vue/dist/antd.css';
+import 'heyui/themes/index.less';
 
 Vue.config.productionTip = false;
 
 Vue.use(utils);
 Vue.use(DB);
-Vue.use(Antd);
+Vue.use(HeyUI);
 
 new Vue({
   router,
