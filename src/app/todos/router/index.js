@@ -2,7 +2,7 @@ import ToDoList from '../views/ToDoList.vue';
 
 const routes = [
   {
-    path: '/todos',
+    path: '/todos/:id',
     name: 'to-do-list',
     component: ToDoList,
     meta: {

@@ -101,6 +101,7 @@ export default {
 
 .todo-list-header {
   height: 64px;
+  padding-left: 24px;
 }
 
 .todo-list {

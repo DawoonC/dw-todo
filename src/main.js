@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import HeyUI from 'heyui';
 
+import './assets/styles/main.scss';
+
 import utils from './plugins/utils';
 import DB from './plugins/db';
 import App from './App.vue';

@@ -6,7 +6,7 @@ Vue.use(VueRouter);
 
 const routes = [
   ...appRoutes,
-  { path: '/', redirect: '/todos' },
+  { path: '/', redirect: '/todos/all' },
 ];
 
 const router = new VueRouter({
