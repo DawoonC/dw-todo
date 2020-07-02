@@ -29,8 +29,9 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
+
+import ToDos from '@/api/local/ToDos';
 
 import ToDoItem from '../components/ToDoItem.vue';
 import AddToDo from '../components/AddToDo.vue';
@@ -43,13 +44,30 @@ export default {
     AddToDo,
   },
 
-  computed: {
-    ...mapGetters('todos', [
-      'todos',
-    ]),
+  data() {
+    return {
+      todos: {},
+    };
+  },
 
+  watch: {
+    $route() {
+      this.handleRouteChange(this.$route.params.id);
+    },
+  },
+
+  computed: {
     todoList() {
-      return this.$utils.orderBy(this.todos, 'created_at', 'asc');
+      const todoList = this.$utils.orderBy(this.todos, 'created_at', 'asc');
+
+      switch (this.$route.params.id) {
+        case 'active':
+          return this.$utils.filter(todoList, (item) => !item.is_done);
+        case 'done':
+          return this.$utils.filter(todoList, 'is_done');
+        default:
+          return todoList;
+      }
     },
 
     toDoListByPriority() {
@@ -58,11 +76,32 @@ export default {
   },
 
   methods: {
-    ...mapActions('todos', [
-      'setMultipleToDos',
-      'removeToDo',
-      'putToDo',
-    ]),
+    async handleRouteChange(listId) {
+      const todos = await this.fetchToDos(listId);
+
+      this.todos = this.$utils.keyBy(todos, 'id');
+    },
+
+    fetchToDos(listId) {
+      switch (listId) {
+        case 'all':
+          return ToDos.fetchAll();
+        case 'active':
+          return ToDos.fetchActive();
+        case 'done':
+          return ToDos.fetchDone();
+        default:
+          return Promise.resolve([]);
+      }
+    },
+
+    putToDo(todo) {
+      this.todos = {
+        ...this.todos,
+        [todo.id]: todo,
+      };
+      ToDos.put(todo);
+    },
 
     onAddToDo(title) {
       const todo = {
@@ -81,15 +120,13 @@ export default {
     },
 
     onRemove(id) {
-      this.removeToDo(id);
+      this.todos = this.$utils.omit(this.todos, id);
+      ToDos.remove(id);
     },
   },
 
-  beforeCreate() {
-    this.$db.todos.toArray()
-      .then((todos) => (
-        this.setMultipleToDos(this.$utils.keyBy(todos, 'id'))
-      ));
+  mounted() {
+    this.handleRouteChange(this.$route.params.id);
   },
 };
 </script>

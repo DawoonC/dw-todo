@@ -7,9 +7,11 @@ const db = new Dexie('dw-todo');
 
 const todoIndices = [
   '&id',
+  'created_at',
 ];
 const todoListIndices = [
   '&id',
+  'created_at',
 ];
 
 db.version(1).stores({

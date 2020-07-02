@@ -2,7 +2,9 @@
   <Sider>
     <Menu
       style="text-align: left;"
-      className="h-menu-white"
+      className="h-menu-dark"
+      class="sidebar-menu"
+      ref="menu"
       :datas="mainMenuList"
       :option="options"
       @select="onSelect"
@@ -49,9 +51,17 @@ export default {
       });
     },
   },
+
+  mounted() {
+    if (this.$route.params.id) {
+      this.$refs.menu.select(this.$route.params.id);
+    }
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-
+.sidebar-menu {
+  height: 100vh;
+}
 </style>
