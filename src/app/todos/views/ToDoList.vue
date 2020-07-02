@@ -18,7 +18,6 @@
           </Cell>
         </Row>
       </div>
-
     </Content>
 
     <HFooter>
@@ -30,7 +29,7 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
 
 import ToDoItem from '../components/ToDoItem.vue';
@@ -44,16 +43,10 @@ export default {
     AddToDo,
   },
 
-  data() {
-    return {
-      todos: {},
-    };
-  },
-
   computed: {
-    // ...mapGetters('todos', [
-    //   'todos',
-    // ]),
+    ...mapGetters('todos', [
+      'todos',
+    ]),
 
     todoList() {
       return this.$utils.orderBy(this.todos, 'created_at', 'asc');
@@ -65,6 +58,12 @@ export default {
   },
 
   methods: {
+    ...mapActions('todos', [
+      'setMultipleToDos',
+      'removeToDo',
+      'putToDo',
+    ]),
+
     onAddToDo(title) {
       const todo = {
         id: uuidv4(),
@@ -74,22 +73,23 @@ export default {
         title,
       };
 
-      this.todos = {
-        ...this.todos,
-        [todo.id]: todo,
-      };
+      this.putToDo(todo);
     },
 
     onChange(todo) {
-      this.todos = {
-        ...this.todos,
-        [todo.id]: todo,
-      };
+      this.putToDo(todo);
     },
 
     onRemove(id) {
-      this.todos = this.$utils.omit(this.todos, id);
+      this.removeToDo(id);
     },
+  },
+
+  beforeCreate() {
+    this.$db.todos.toArray()
+      .then((todos) => (
+        this.setMultipleToDos(this.$utils.keyBy(todos, 'id'))
+      ));
   },
 };
 </script>

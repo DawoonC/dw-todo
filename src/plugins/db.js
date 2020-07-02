@@ -14,7 +14,7 @@ const todoListIndices = [
 
 db.version(1).stores({
   todos: todoIndices.join(','),
-  todo_lists: todoListIndices.join(','),
+  todoLists: todoListIndices.join(','),
 });
 
 export { db };
