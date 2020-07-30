@@ -3,7 +3,7 @@
     <div class="todo-item-check">
       <i
         class="h-icon-complete gray2-color text-hover"
-        :class="{ 'todo-item-is-done': todo.is_done }"
+        :class="{ 'todo-item-is-done': todo.isDone }"
         @click="onCheckClick"
       />
     </div>
@@ -11,7 +11,7 @@
     <div class="todo-item-title">
       <input
         type="text"
-        :class="{ 'todo-item-is-done': todo.is_done }"
+        :class="{ 'todo-item-is-done': todo.isDone }"
         :value="todo.title"
         @input="onTitleChange"
       />
@@ -41,8 +41,9 @@ export default {
       const changed = {
         ...this.todo,
         title: event.target.value,
-        updated_at: new Date(),
+        updatedAt: new Date(),
       };
+      console.log('onTitleChange', changed);
 
       this.$emit('change', changed);
     },
@@ -50,9 +51,10 @@ export default {
     onCheckClick() {
       const changed = {
         ...this.todo,
-        is_done: !this.todo.is_done,
-        updated_at: new Date(),
+        isDone: !this.todo.isDone,
+        updatedAt: new Date(),
       };
+      console.log('onCheckClick:', changed);
 
       this.$emit('change', changed);
     },

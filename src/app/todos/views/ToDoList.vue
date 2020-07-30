@@ -3,20 +3,30 @@
     <HHeader>
       <div class="todo-list-header">
         <h1>ToDo List</h1>
+
+        <button class="h-btn more-btn">
+          <i class="material-icons">more_horiz</i>
+        </button>
       </div>
     </HHeader>
 
     <Content>
       <div class="todo-list">
-        <Row :space-y="2">
-          <Cell width="24" v-for="todo in todoList" :key="todo.id">
+        <SlickList v-model="todoList" :distance="10">
+          <SlickItem
+            v-for="(todo, index) in todoList"
+            :index="index"
+            :key="todo.id"
+            :disabled="sortDisabled"
+            class="todo-list-item-container"
+          >
             <ToDoItem
               :todo="todo"
               @change="onChange"
               @remove="onRemove"
             />
-          </Cell>
-        </Row>
+          </SlickItem>
+        </SlickList>
       </div>
     </Content>
 
@@ -29,9 +39,9 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+import { SlickList, SlickItem } from 'vue-slicksort';
 import { v4 as uuidv4 } from 'uuid';
-
-import ToDos from '@/api/local/ToDos';
 
 import ToDoItem from '../components/ToDoItem.vue';
 import AddToDo from '../components/AddToDo.vue';
@@ -40,75 +50,81 @@ export default {
   name: 'to-do-list',
 
   components: {
+    SlickList,
+    SlickItem,
     ToDoItem,
     AddToDo,
   },
 
-  data() {
-    return {
-      todos: {},
-    };
-  },
-
-  watch: {
-    $route() {
-      this.handleRouteChange(this.$route.params.id);
-    },
-  },
-
   computed: {
-    todoList() {
-      const todoList = this.$utils.orderBy(this.todos, 'created_at', 'asc');
+    ...mapGetters('todos', [
+      'todos',
+    ]),
 
+    todoList: {
+      get() {
+        const list = this.$utils.orderBy(this.todos, 'priority', 'asc');
+
+        switch (this.$route.params.id) {
+          case 'active':
+            return this.$utils.filter(list, (item) => !item.isDone);
+          case 'done':
+            return this.$utils.filter(list, 'isDone');
+          case 'all':
+            return list;
+          default:
+            return this.$utils.filter(list, (item) => (
+              item.listId === this.$route.params.id
+            ));
+        }
+      },
+
+      set(newList) {
+        const list = this.$utils.map(newList, (item, i) => ({
+          ...item,
+          priority: i,
+        }));
+
+        this.putMultipleToDos(this.$utils.keyBy(list, 'id'));
+      },
+    },
+
+    listId() {
       switch (this.$route.params.id) {
         case 'active':
-          return this.$utils.filter(todoList, (item) => !item.is_done);
         case 'done':
-          return this.$utils.filter(todoList, 'is_done');
+        case 'all':
+          return null;
         default:
-          return todoList;
+          return this.$route.params.id;
       }
     },
 
-    toDoListByPriority() {
-      return this.$utils.orderBy(this.todos, 'priority', 'asc');
+    sortDisabled() {
+      switch (this.$route.params.id) {
+        case 'done':
+          return true;
+        default:
+          return false;
+      }
     },
   },
 
   methods: {
-    async handleRouteChange(listId) {
-      const todos = await this.fetchToDos(listId);
-
-      this.todos = this.$utils.keyBy(todos, 'id');
-    },
-
-    fetchToDos(listId) {
-      switch (listId) {
-        case 'all':
-          return ToDos.fetchAll();
-        case 'active':
-          return ToDos.fetchActive();
-        case 'done':
-          return ToDos.fetchDone();
-        default:
-          return Promise.resolve([]);
-      }
-    },
-
-    putToDo(todo) {
-      this.todos = {
-        ...this.todos,
-        [todo.id]: todo,
-      };
-      ToDos.put(todo);
-    },
+    ...mapActions('todos', [
+      'putMultipleToDos',
+      'removeToDo',
+      'putToDo',
+    ]),
 
     onAddToDo(title) {
       const todo = {
         id: uuidv4(),
-        is_done: false,
-        created_at: new Date(),
-        updated_at: new Date(),
+        isDone: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        priority: this.todoList.length + 1,
+        listId: this.listId,
         title,
       };
 
@@ -120,13 +136,16 @@ export default {
     },
 
     onRemove(id) {
-      this.todos = this.$utils.omit(this.todos, id);
-      ToDos.remove(id);
+      this.removeToDo(id);
     },
   },
 
   mounted() {
-    this.handleRouteChange(this.$route.params.id);
+    this.putMultipleToDos(this.$ls.get('todos', {}));
+
+    setInterval(() => (
+      this.$ls.set('todos', this.todos)
+    ), 10000);
   },
 };
 </script>
@@ -139,12 +158,28 @@ export default {
 .todo-list-header {
   height: 64px;
   padding-left: 24px;
+  position: relative;
+
+  .more-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    i {
+      font-size: 20px;
+    }
+  }
 }
 
 .todo-list {
   overflow-y: scroll;
   height: calc(100vh - 64px - 104px);
   padding: 24px;
+}
+
+.todo-list-item-container {
+  padding-top: 1px;
+  padding-bottom: 1px;
 }
 
 .todo-list-footer {

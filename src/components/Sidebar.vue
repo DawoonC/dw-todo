@@ -14,7 +14,7 @@
 
 <script>
 import { MAIN_MENU_ID_LIST } from '@/config';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'sidebar',
@@ -44,6 +44,10 @@ export default {
   },
 
   methods: {
+    ...mapActions('todos', [
+      'putMultipleToDoLists',
+    ]),
+
     onSelect(menu) {
       this.$router.push({
         name: 'to-do-list',
@@ -53,6 +57,8 @@ export default {
   },
 
   mounted() {
+    this.putMultipleToDoLists(this.$ls.get('todoLists', {}));
+
     if (this.$route.params.id) {
       this.$refs.menu.select(this.$route.params.id);
     }

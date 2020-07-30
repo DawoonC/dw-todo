@@ -19,4 +19,6 @@ export default {
       icon: 'h-icon-menu',
     },
   },
+
+  todos: {},
 };
