@@ -4,6 +4,8 @@ import {
   createProtocol,
   /* installVueDevtools */
 } from 'vue-cli-plugin-electron-builder/lib';
+import path from 'path';
+/* global __static */
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -25,6 +27,7 @@ function createWindow() {
       // nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       nodeIntegration: true,
     },
+    icon: path.join(__static, 'icon.png'),
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
