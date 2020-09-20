@@ -1,7 +1,9 @@
 @import '~material-design-icons/iconfont/material-icons.css';
+@import '~materialize-css/sass/materialize.scss';
+
+$primary-color: color('materialize-teal', 'lighten-2') !default;
+$secondary-color: color('orange', 'darken-1') !default;
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Roboto', 'Nanum Gothic', sans-serif;
 }

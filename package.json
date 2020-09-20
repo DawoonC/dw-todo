@@ -16,9 +16,9 @@
   "main": "background.js",
   "dependencies": {
     "core-js": "^3.6.5",
-    "heyui": "^1.26.0",
     "lodash": "^4.17.15",
     "material-design-icons": "^3.0.1",
+    "materialize-css": "^1.0.0",
     "uuid": "^8.1.0",
     "vue": "^2.6.11",
     "vue-ls": "^3.2.1",

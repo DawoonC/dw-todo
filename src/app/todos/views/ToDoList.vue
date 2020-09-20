@@ -1,41 +1,27 @@
 <template>
-  <Layout class="todo-list-layout">
-    <HHeader>
-      <div class="todo-list-header">
-        <h1>ToDo List</h1>
+  <section class="container todo-list-layout">
+    <div class="todo-list">
+      <SlickList v-model="todoList" :distance="10">
+        <SlickItem
+          v-for="(todo, index) in todoList"
+          :index="index"
+          :key="todo.id"
+          :disabled="sortDisabled"
+          class="todo-list-item-container"
+        >
+          <ToDoItem
+            :todo="todo"
+            @change="onChange"
+            @remove="onRemove"
+          />
+        </SlickItem>
+      </SlickList>
+    </div>
 
-        <button class="h-btn more-btn">
-          <i class="material-icons">more_horiz</i>
-        </button>
-      </div>
-    </HHeader>
-
-    <Content>
-      <div class="todo-list">
-        <SlickList v-model="todoList" :distance="10">
-          <SlickItem
-            v-for="(todo, index) in todoList"
-            :index="index"
-            :key="todo.id"
-            :disabled="sortDisabled"
-            class="todo-list-item-container"
-          >
-            <ToDoItem
-              :todo="todo"
-              @change="onChange"
-              @remove="onRemove"
-            />
-          </SlickItem>
-        </SlickList>
-      </div>
-    </Content>
-
-    <HFooter>
-      <div class="todo-list-footer">
-        <AddToDo @add="onAddToDo"/>
-      </div>
-    </HFooter>
-  </Layout>
+    <div class="todo-list-footer">
+      <AddToDo @add="onAddToDo"/>
+    </div>
+  </section>
 </template>
 
 <script>
@@ -151,10 +137,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.todo-list-layout {
-  height: 100vh;
-}
-
 .todo-list-header {
   height: 64px;
   padding-left: 24px;
@@ -173,8 +155,16 @@ export default {
 
 .todo-list {
   overflow-y: scroll;
-  height: calc(100vh - 64px - 104px);
+  height: calc(100vh - 110px - 119px);
   padding: 24px;
+
+  @media only screen and (max-width: 992px) {
+    height: calc(100vh - 64px - 119px);
+  }
+
+  @media only screen and (max-width: 600px) {
+    height: calc(100vh - 56px - 119px);
+  }
 }
 
 .todo-list-item-container {

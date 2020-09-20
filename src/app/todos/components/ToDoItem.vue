@@ -1,12 +1,16 @@
 <template>
   <div class="todo-item">
-    <div class="todo-item-check">
+    <button
+      class="btn-floating btn-medium btn-flat todo-item-check"
+      @click="onCheckClick"
+    >
       <i
-        class="h-icon-complete gray2-color text-hover"
+        class="material-icons grey-text text-lighten-2 waves-effect waves-light"
         :class="{ 'todo-item-is-done': todo.isDone }"
-        @click="onCheckClick"
-      />
-    </div>
+      >
+        check_circle_outline
+      </i>
+    </button>
 
     <div class="todo-item-title">
       <input
@@ -17,12 +21,14 @@
       />
     </div>
 
-    <div class="todo-item-remove">
-      <i
-        class="h-icon-trash gray2-color text-hover"
-        @click="$emit('remove', todo.id)"
-      />
-    </div>
+    <button
+      class="btn-floating btn-medium btn-flat todo-item-remove"
+      @click="$emit('remove', todo.id)"
+    >
+      <i class="material-icons grey-text text-lighten-2 waves-effect waves-light">
+        delete
+      </i>
+    </button>
   </div>
 </template>
 
@@ -43,7 +49,6 @@ export default {
         title: event.target.value,
         updatedAt: new Date(),
       };
-      console.log('onTitleChange', changed);
 
       this.$emit('change', changed);
     },
@@ -54,7 +59,6 @@ export default {
         isDone: !this.todo.isDone,
         updatedAt: new Date(),
       };
-      console.log('onCheckClick:', changed);
 
       this.$emit('change', changed);
     },
@@ -72,36 +76,40 @@ export default {
   padding: 12px 60px;
 
   .todo-item-check, .todo-item-remove {
-    width: 22px;
+    top: 14px;
     position: absolute;
+
+    &:hover, &:focus {
+      background-color: transparent;
+    }
+
+    i {
+      font-size: 2.7rem;
+    }
   }
 
   .todo-item-check {
-    left: 24px;
-    top: 12px;
-    font-size: 22px;
+    left: 12px;
 
     .todo-item-is-done {
-      color: #45b984 !important;
+      color: #66bb6a !important;
 
       &:active {
-        color: #30815c !important;
+        color: #388e3c !important;
       }
     }
   }
 
   .todo-item-remove {
     right: 12px;
-    top: 14px;
-    font-size: 18px;
 
-    .text-hover {
+    i {
       &:hover {
-        color: #E53935 !important;
+        color: #ef5350 !important;
       }
 
       &:active {
-        color: #B71C1C !important;
+        color: #d32f2f !important;
       }
     }
   }
@@ -113,6 +121,12 @@ export default {
       width: 100%;
       font-size: 24px;
       border: none;
+      margin: 0;
+
+      &:focus {
+        border-bottom: none;
+        box-shadow: none;
+      }
 
       &.todo-item-is-done {
         text-decoration: line-through;

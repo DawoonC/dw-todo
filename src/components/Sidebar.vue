@@ -1,43 +1,49 @@
 <template>
-  <Sider class="sidebar">
-    <div class="sidebar-menu">
-      <Menu
-        style="text-align: left;"
-        className="h-menu-white"
-        ref="menu"
-        :datas="defaultMenuList"
-        :option="options"
-        @select="onSelect"
+  <ul id="sidebar" class="sidenav sidenav-fixed">
+    <li class="logo">
+      <h3 class="center-align">DW TODO</h3>
+    </li>
+
+    <li
+      class="bold"
+      v-for="item in defaultMenuList"
+      :key="item.id"
+      :class="{ active: $route.params.id === item.id }"
+    >
+      <router-link :to="{ name: 'to-do-list', params: { id: item.id } }">
+        {{ item.title }}
+      </router-link>
+    </li>
+
+    <li class="divider"/>
+
+    <li
+      class="bold"
+      v-for="item in customMenuList"
+      :key="item.id"
+    >
+      <router-link :to="{ name: 'to-do-list', params: { id: item.id } }">
+        {{ item.title }}
+      </router-link>
+    </li>
+
+    <li class="new-list">
+      <input
+        type="text"
+        placeholder="+ New List"
+        v-model="newListTitle"
+        :maxlength="newListTitleMaxLength"
+        :minlength="newListTitleMinLength"
+        @keyup.enter="addNewList(newListTitle)"
       />
-
-      <hr>
-
-      <Menu
-        style="text-align: left;"
-        className="h-menu-white"
-        ref="menu"
-        :datas="customMenuList"
-        :option="options"
-        @select="onSelect"
-      />
-
-      <div class="add-new-list">
-        <input
-          type="text"
-          placeholder="+ New List"
-          v-model="newListTitle"
-          :maxlength="newListTitleMaxLength"
-          :minlength="newListTitleMinLength"
-          @keyup.enter="addNewList(newListTitle)"
-        />
-      </div>
-    </div>
-  </Sider>
+    </li>
+  </ul>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import { v4 as uuidv4 } from 'uuid';
+import M from 'materialize-css';
 
 export default {
   name: 'sidebar',
@@ -73,13 +79,6 @@ export default {
       'putToDoList',
     ]),
 
-    onSelect(menu) {
-      this.$router.push({
-        name: 'to-do-list',
-        params: { id: menu.id },
-      });
-    },
-
     addNewList(newListTitle) {
       if (newListTitle.length < this.newListTitleMinLength) {
         return;
@@ -99,11 +98,8 @@ export default {
   },
 
   mounted() {
+    M.AutoInit();
     this.putMultipleToDoLists(this.$ls.get('todoLists', {}));
-
-    if (this.$route.params.id) {
-      this.$refs.menu.select(this.$route.params.id);
-    }
 
     setInterval(() => (
       this.$ls.set('todoLists', this.todoLists)
@@ -113,27 +109,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sidebar {
-  box-shadow: 0 0 4px 0 rgba(0,0,0,0.14),
-    0 0 2px -2px rgba(0,0,0,0.12),
-    0 0 10px 0 rgba(0,0,0,0.2);
+.logo {
+  padding-top: 31px;
+  padding-bottom: 31px;
+  border-bottom: 1px solid rgba(0,0,0,0.14);
+  font-size: 1.4rem;
+
+  h3 {
+    margin: 0;
+  }
 }
 
-.sidebar-menu {
-  height: 100vh;
-}
-
-.add-new-list {
-  padding: 7px 26px;
+.new-list {
+  padding: 8px 32px;
 
   input {
-    width: 100%;
-    font-size: 14px;
-    border: none !important;
-    box-shadow: none !important;
-
-    &::placeholder {
-      font-weight: 500;
+    &:focus {
+      border-bottom: 1px solid #43a047 !important;
+      box-shadow: 0 1px 0 0 #43a047 !important;
     }
   }
 }

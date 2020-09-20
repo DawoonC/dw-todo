@@ -1,6 +1,6 @@
 import Vue from 'vue';
-import HeyUI from 'heyui';
 import Storage from 'vue-ls';
+import 'materialize-css';
 
 import './assets/styles/main.scss';
 
@@ -10,12 +10,10 @@ import router from './router';
 import store from './store';
 
 import 'material-design-icons';
-import 'heyui/themes/index.less';
 
 Vue.config.productionTip = false;
 
 Vue.use(utils);
-Vue.use(HeyUI);
 Vue.use(Storage, {
   namespace: 'dwtodo__',
   storage: 'local',

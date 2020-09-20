@@ -1,11 +1,13 @@
 <template>
   <div class="todo">
-    <div class="todo-add">
-      <i
-        class="h-icon-plus gray2-color text-hover"
-        @click="add"
-      />
-    </div>
+    <button
+      class="btn-floating btn-medium btn-flat todo-add waves-effect"
+      @click="add"
+    >
+      <i class="material-icons small grey-text text-lighten-2">
+        add
+      </i>
+    </button>
 
     <div class="todo-title">
       <input
@@ -47,11 +49,17 @@ export default {
   padding: 12px 24px 12px 60px;
 
   .todo-add {
-    width: 22px;
     position: absolute;
-    left: 24px;
-    top: 12px;
-    font-size: 22px;
+    left: 12px;
+    top: 14px;
+
+    &:hover, &:focus {
+      background-color: transparent;
+    }
+
+    i {
+      font-size: 2.7rem;
+    }
   }
 
   .todo-title {
@@ -61,9 +69,15 @@ export default {
       width: 100%;
       font-size: 24px;
       border: none;
+      margin: 0;
+
+      &:focus {
+        border-bottom: none;
+        box-shadow: none;
+      }
 
       &::placeholder {
-        color: #d3d3d3 !important;
+        color: #e0e0e0 !important;
       }
     }
   }
